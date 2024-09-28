@@ -1,24 +1,13 @@
-require('dotenv').config();
-const express = require('express');
-const redis = require('redis');
+import 'dotenv/config';
+import express from 'express';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
+app.use(express.json());
 
-const redisClient = redis.createClient({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-});
-
-redisClient.on('connect', () => {
-    console.log('Connected to Redis');
-});
-
-redisClient.on('error', (err) => {
-    console.error('Redis error:', err);
-});
-
-
+import ReturnResponse from "./middlewares/api/return-response.js";
+import api from "./routes/api/_root.js";
+app.use("/api", api, ReturnResponse);
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
