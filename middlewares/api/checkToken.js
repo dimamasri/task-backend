@@ -16,7 +16,7 @@ const checkToken = async (req, res, next) => {
             return next();
         } else {
             console.log(`${process.env.SPOTIFY_ACCOUNTS_URL}`);
-            const response = await axios.post(`https://accounts.spotify.com/api/token`, new URLSearchParams({
+            const response = await axios.post(`${process.env.SPOTIFY_ACCOUNTS_URL}token`, new URLSearchParams({
                 grant_type: 'client_credentials',
                 client_id: process.env.CLIENT_ID,
                 client_secret: process.env.CLIENT_SECRET,

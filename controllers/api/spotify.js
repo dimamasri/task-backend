@@ -31,7 +31,7 @@ export const fetchGenres = async (req) => {
 
 export const fetchArtistsByGenre = async (req) => {
     const { genre } = req.body; 
-    const response = await axios.get('https://api.spotify.com/v1/search', {
+    const response = await axios.get(`${process.env.SPOTIFY_API_URL}search`, {
         headers: {
             'Authorization': `Bearer ${req.token}`,
         },
