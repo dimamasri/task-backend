@@ -11,10 +11,8 @@ export const chat = async (req, res) => {
 
     const { message, artistId, artistName, genre, image } = req.body;
 
-    console.log(process.env.GEMINI_API_KEY);
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-    const prompt = "Describe how this product might be manufactured.";
     const keywords = [
         `${artistName}`,
         'music',
@@ -36,6 +34,7 @@ export const chat = async (req, res) => {
             temperature: 1.0,
         },
     });
+    
     let result = null;
     if (image)
         result = await model.generateContent([message, image]);
