@@ -2,7 +2,7 @@ import express from "express";
 import handler from "../../middlewares/shared/handler.js";
 import { fetchArtistsByGenre, fetchGenres } from "../../controllers/api/spotify.js";
 import checkToken from "../../middlewares/api/checkToken.js";
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 
 const router = express.Router();
 
