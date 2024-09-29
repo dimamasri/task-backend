@@ -37,14 +37,16 @@ export const chat = async (req, res) => {
         generationConfig: {
             candidateCount: 1,
             stopSequences: ["x"],
-            maxOutputTokens: 100,
+            maxOutputTokens: 150,
             temperature: 1.0,
         },
     });
 
     let result = '';
     if (image) {
-        result = await model.generateContent([formattedMessage, image]);
+        let formattedImage = image.replace(/^data:image\/png;base64,/, ""); 
+        // const buffer = Buffer.from(formattedImage, 'base64');
+        result = await model.generateContent([formattedMessage, formattedImage]);
     } else {
         result = await model.generateContent(formattedMessage);
     }
