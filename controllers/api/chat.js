@@ -6,9 +6,7 @@ import https from 'https';
 const agent = new https.Agent({
     rejectUnauthorized: false,
 });
-
 export const chat = async (req, res) => {
-
     const { message, artistId, artistName, genre, image } = req.body;
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -19,11 +17,20 @@ export const chat = async (req, res) => {
         'album',
         'song',
         'genre',
+        'hello',
+        'lyrics',
+        'your',
+        'you',
         `${genre}`,
     ];
     if (!keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase()))) {
         return res.json({ response: "I'm sorry, but I can only answer questions about the artist and their music." });
     }
+
+    const artistNameLower = artistName.toLowerCase();
+    const formattedMessage = message
+        .replace(/\byou\b/gi, artistNameLower)
+        .replace(/\byour\b/gi, `${artistNameLower}'s`);
 
     const model = genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
@@ -34,25 +41,26 @@ export const chat = async (req, res) => {
             temperature: 1.0,
         },
     });
-    
-    let result = null;
-    if (image)
-        result = await model.generateContent([message, image]);
-    else
-        result = await model.generateContent(message);
+
+    let result = '';
+    if (image) {
+        result = await model.generateContent([formattedMessage, image]);
+    } else {
+        result = await model.generateContent(formattedMessage);
+    }
 
     const cookies = cookie.parse(req.headers.cookie || '');
     const userId = cookies.userId;
 
-    const response = result.response.text();
+    const responseText = result.response?.text() || "No response";
 
     await Chat.findOneAndUpdate(
         { userId, artistId },
-        { $push: { messages: { userMessage: message, aiResponse: response } } },
+        { $push: { messages: { userMessage: message, aiResponse: responseText } } },
         { upsert: true, new: true }
     );
 
-    return res.json({ response });
+    return res.json({ response: responseText });
 
 };
 

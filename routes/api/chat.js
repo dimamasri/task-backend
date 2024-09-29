@@ -19,7 +19,7 @@ router.post(
         .isLength({ min: 1 })
         .withMessage("The message must be at least 1 character long")
         .bail(),
-    handler(chat)
+    chat
 );
 
 
